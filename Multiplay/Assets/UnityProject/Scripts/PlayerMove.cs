@@ -1,175 +1,222 @@
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
-    using Rewired;
-    using Unity.VisualScripting;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Rewired;
+using Unity.VisualScripting;
+using Photon.Pun;
+public class PlayerMove : MonoBehaviourPun
+{
+    public GameObject attackCollider;
+    public GameObject fallEffect;
+    public float speed;
+    public float jumpForce;
+    public float maxSpeed;
+    public int playerId = 0;
+    Rigidbody playerRigid;
+    AudioSource playerStepSound;
+    public Animator animator;
+    public Transform cameraArm;
+    public Transform target;
+    public float smoothSpeed = 0.125f;
+    public Vector3 offset;
 
-    public class PlayerMove : MonoBehaviour
+    private Vector3 velocity = Vector3.zero;
+    private float airbornTimer = 0.0f;
+    private float airbornRate = 1f;
+    private Player player;
+    private Vector3 moveVector;
+    private bool fire;
+    private bool isWalking;
+    private bool isGround;
+    private bool fallDamage;
+
+    // Start is called before the first frame update
+    void Start()
     {
-        public GameObject fallEffect;
-        public float speed;
-        public float jumpForce;
-        public float maxSpeed;
-        public int playerId = 0;
-        Rigidbody playerRigid;
-        AudioSource playerStepSound;
-        public Animator animator;
-        public Transform cameraArm;
-        public Transform target;
-        public float smoothSpeed = 0.125f;
-        public Vector3 offset;
+        fire = false;
+        playerRigid = GetComponent<Rigidbody>();
+        player = ReInput.players.GetPlayer(playerId);
+        playerStepSound = GetComponent<AudioSource>();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        animator = GetComponent<Animator>();
+    }
 
-        private Vector3 velocity = Vector3.zero;
-        private float airbornTimer = 0.0f;
-        private float airbornRate = 1f;
-        private Player player;
-        private Vector3 moveVector;
-        private bool fire;
-        private bool isWalking;
-        private bool isGround;
-        private bool fallDamage;
 
-        // Start is called before the first frame update
-        void Start()
+
+
+    private void GetInput()
+    {
+        if (!photonView.IsMine)
         {
-            fire = false;
-            playerRigid = GetComponent<Rigidbody>();
-            player = ReInput.players.GetPlayer(playerId);
-            playerStepSound = GetComponent<AudioSource>();
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-            animator = GetComponent<Animator>();
+            return;
         }
 
+        //moveVector.x = player.GetAxis("Move Horizontal");
+        //moveVector.z = player.GetAxis("Move Vertical");
+        fire = player.GetButtonDown("Attack");
 
+    }
 
-
-        private void GetInput()
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Floor"))
         {
-            //moveVector.x = player.GetAxis("Move Horizontal");
-            //moveVector.z = player.GetAxis("Move Vertical");
-            fire = player.GetButtonDown("Attack");
+            isGround = true;
+            airbornTimer = 0.0f;
+        }
+    }
 
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Floor"))
+        {
+            isGround = false;
+        }
+    }
+    [PunRPC]
+    private void ProcessInput()
+    {
+
+        if (!photonView.IsMine)
+        {
+            return;
         }
 
-        private void OnCollisionEnter(Collision collision)
-        {
-            if (collision.gameObject.CompareTag("Floor"))
-            {
-                isGround = true;
-                airbornTimer = 0.0f;
-            }
-        }
-
-        private void OnCollisionExit(Collision collision)
-        {
-            if (collision.gameObject.CompareTag("Floor"))
-            {
-                isGround = false;
-            }
-        }
-
-        private void ProcessInput()
+        if (fire)
         {
 
-            if (fire)
-            {
-                Debug.Log("¹ß»ç");
-                // Set vibration in all Joysticks assigned to the Player
-                int motorIndex = 0; // the first motor
-                float motorLevel = 0.05f; // full motor speed
-                float duration = 0.2f; // 2 seconds
-                player.SetVibration(motorIndex, motorLevel, duration);
-            
-            }
-
+            StartCoroutine(AttackRoutine());
+            animator.Play("f_melee_combat_attack_A");
+            // Set vibration in all Joysticks assigned to the Player
+            int motorIndex = 0; // the first motor
+            float motorLevel = 0.05f; // full motor speed
+            float duration = 0.2f; // 2 seconds
+            player.SetVibration(motorIndex, motorLevel, duration);
 
         }
-        private void LateUpdate()
-        {
-            Vector3 desiredPosition = target.position + offset;
-            Vector3 smoothedPosition = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, smoothSpeed);
-            cameraArm.position = smoothedPosition;
-
-
-        }
-        private void LookAround()
-        {
-            Vector2 mouseDelta = new Vector2(player.GetAxis("Camera Horizontal"), player.GetAxis("Camera Vertical"));
-            mouseDelta *= 0.2f;
-            Vector3 camAngle = cameraArm.rotation.eulerAngles;
-            float x = camAngle.x - mouseDelta.y;
-            if (x < 180f)
-            {
-                x = Mathf.Clamp(x, -1f, 40f);
-            }
-            else
-            {
-                x = Mathf.Clamp(x, 335f, 361f);
-            }
-            cameraArm.rotation = Quaternion.Euler(x, camAngle.y + mouseDelta.x, camAngle.z);
-        }
-        // Update is called once per frame
-        void Update()
-        {
         
 
-            LookAround();
-            float moveHorizontal = player.GetAxis("Move Horizontal");
-            float moveVertical = player.GetAxis("Move Vertical");
-       
 
-            Vector3 cameraForward = cameraArm.forward; // Ä«¸Þ¶ó°¡ º¸°í ÀÖ´Â ¹æÇâ º¤ÅÍ¸¦ °¡Á®¿È
-            Vector3 cameraRight = cameraArm.right; // Ä«¸Þ¶óÀÇ ¿À¸¥ÂÊ ¹æÇâ º¤ÅÍ¸¦ °¡Á®¿È
-            cameraForward.y = 0f; // y Ãà °ªÀ» 0À¸·Î ¼³Á¤ÇÏ¿© ¼öÆò ÀÌµ¿¸¸ °¡´ÉÇÏ°Ô ÇÔ
-            cameraRight.y = 0f; // y Ãà °ªÀ» 0À¸·Î ¼³Á¤ÇÏ¿© ¼öÆò ÀÌµ¿¸¸ °¡´ÉÇÏ°Ô ÇÔ
-            cameraForward.Normalize(); // º¤ÅÍ Á¤±ÔÈ­
-            cameraRight.Normalize(); // º¤ÅÍ Á¤±ÔÈ­
-            Vector3 movement = (cameraForward * moveVertical + cameraRight * moveHorizontal) * speed;
+
+    }
+    private void LateUpdate()
+    {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        Vector3 desiredPosition = target.position + offset;
+        Vector3 smoothedPosition = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, smoothSpeed);
+        cameraArm.position = smoothedPosition;
+
+
+    }
+    private void LookAround()
+    {
+        if (!photonView.IsMine)
+        {
+            return;
+        }
+
+        Vector2 mouseDelta = new Vector2(player.GetAxis("Camera Horizontal"), player.GetAxis("Camera Vertical"));
+        mouseDelta *= 0.2f;
+        Vector3 camAngle = cameraArm.rotation.eulerAngles;
+        float x = camAngle.x - mouseDelta.y;
+        if (x < 180f)
+        {
+            x = Mathf.Clamp(x, -1f, 40f);
+        } 
+        else
+        {
+            x = Mathf.Clamp(x, 335f, 361f);
+        }
+        cameraArm.rotation = Quaternion.Euler(x, camAngle.y + mouseDelta.x, camAngle.z);
+    }
+    // Update is called once per frame
+    void Update()
+    {
+        if(!photonView.IsMine)
+        {
+            return;
+        }
+
+        LookAround();
+        float moveHorizontal = player.GetAxis("Move Horizontal");
+        float moveVertical = player.GetAxis("Move Vertical");
+
+
+        Vector3 cameraForward = cameraArm.forward; // Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        Vector3 cameraRight = cameraArm.right; // Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        cameraForward.y = 0f; // y ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½
+        cameraRight.y = 0f; // y ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½
+        cameraForward.Normalize(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
+        cameraRight.Normalize(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
+        Vector3 movement = (cameraForward * moveVertical + cameraRight * moveHorizontal) * speed;
 
         float movementSpeed = Mathf.Clamp01(Mathf.Sqrt(moveHorizontal * moveHorizontal + moveVertical * moveVertical));
         animator.SetFloat("MoveSpeed", movementSpeed);
-          
 
-            
-            // RigidbodyÀÇ ¼Óµµ¸¦ Á÷Á¢ º¯°æÇÏ¿© ÀÌµ¿½ÃÅ´
-            playerRigid.velocity = new Vector3(movement.x, playerRigid.velocity.y, movement.z);
 
-            if (playerRigid.velocity.magnitude > maxSpeed)
+        transform.LookAt(transform.position + movement);
+
+        // Rigidbodyï¿½ï¿½ ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Ìµï¿½ï¿½ï¿½Å´
+        playerRigid.velocity = new Vector3(movement.x, playerRigid.velocity.y, movement.z);
+
+        if (playerRigid.velocity.magnitude > maxSpeed)
+        {
+            playerRigid.velocity = playerRigid.velocity.normalized * maxSpeed;
+        }
+
+        isWalking = movement.magnitude != 0;
+
+
+
+
+
+
+        if (player.GetButtonDown("Player Jump"))
+        {
+            if (isGround)
             {
-                playerRigid.velocity = playerRigid.velocity.normalized * maxSpeed;
-            }
-
-            isWalking = movement.magnitude != 0;
-        
-           
-
-            transform.LookAt(transform.position + movement);
-            
-
-        
-                if (player.GetButtonDown("Player Jump"))
-            {
-                if (isGround)
-                {
                 isGround=false;
                 animator.Play("PlayerJump");
                 animator.SetBool("Jump", true);
-                    playerRigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                    if (transform.position.y > 0f)
-                    {
-                        Vector3 gravity = new Vector3(0f, -1f, 0f);
-                        playerRigid.velocity = gravity;
-                    }
+                playerRigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                if (transform.position.y > 0f)
+                {
+                    Vector3 gravity = new Vector3(0f, -1f, 0f);
+                    playerRigid.velocity = gravity;
                 }
             }
-                if(isGround)
+        }
+        if (isGround)
         {
             animator.SetBool("Jump", false);
 
         }
         GetInput();
-            ProcessInput();
+        ProcessInput();
+    }
+
+    [PunRPC]
+    private void OnTriggerEnter(Collider other)
+    {
+        Rigidbody rb = other.GetComponent<Rigidbody>();
+        if(rb != null)
+        {
+            Vector3 direction = (other.transform.position-transform.position).normalized;
+            rb.AddForce(direction*8, ForceMode.Impulse);
         }
     }
+    private IEnumerator AttackRoutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        attackCollider.SetActive(true);
+        yield return new WaitForSeconds(1);
+        attackCollider.SetActive(false);
+    }
+}
 
