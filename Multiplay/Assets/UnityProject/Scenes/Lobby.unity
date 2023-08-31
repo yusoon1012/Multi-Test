@@ -825,6 +825,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: StickProps
       objectReference: {fileID: 0}
+    - target: {fileID: 2724884534310658047, guid: 612845b9b5d39ac488d5c11889ff0e8a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 612845b9b5d39ac488d5c11889ff0e8a, type: 3}
 --- !u!1001 &1131349719
@@ -893,6 +898,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Field
+      objectReference: {fileID: 0}
+    - target: {fileID: 3411242252740410791, guid: 1370b7dc6f3ec7a49829f876fffa7f4a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1370b7dc6f3ec7a49829f876fffa7f4a, type: 3}

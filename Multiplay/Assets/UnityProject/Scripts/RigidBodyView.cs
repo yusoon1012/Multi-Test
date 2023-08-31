@@ -5,29 +5,46 @@ using Photon.Pun;
 public class RigidBodyView : MonoBehaviourPun, IPunObservable
 {
     private Rigidbody rb;
+    Vector3 networkPosition;
+    Quaternion networkRotation;
+    Vector3 velocity;
+    Vector3 angularVelocity;
 
+    bool valuesReceived = false;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+    }
+    private void Update()
+    {
+        
+    }
+    private void FixedUpdate()
+    {
+        if (!photonView.IsMine)
+        {
+            rb.position = Vector3.MoveTowards(rb.position, networkPosition, Time.fixedDeltaTime);
+               rb.rotation = Quaternion.RotateTowards(rb.rotation, networkRotation, Time.fixedDeltaTime * 100.0f);
+        }
     }
     [PunRPC]
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
-            // 로컬 플레이어의 데이터를 전송
             stream.SendNext(rb.position);
-            stream.SendNext(rb.velocity);
             stream.SendNext(rb.rotation);
-            stream.SendNext(rb.angularVelocity);
+            stream.SendNext(rb.velocity);
         }
         else
         {
-            // 원격 플레이어의 데이터를 수신
-            rb.position = (Vector3)stream.ReceiveNext();
+            networkPosition = (Vector3)stream.ReceiveNext();
+            networkRotation = (Quaternion)stream.ReceiveNext();
             rb.velocity = (Vector3)stream.ReceiveNext();
-            rb.rotation = (Quaternion)stream.ReceiveNext();
-            rb.angularVelocity = (Vector3)stream.ReceiveNext();
+
+            float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.timestamp));
+            networkPosition += (rb.velocity * lag);
         }
     }
+    
 }

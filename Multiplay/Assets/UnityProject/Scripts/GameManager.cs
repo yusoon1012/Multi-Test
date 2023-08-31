@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
     }
 
     private static GameManager m_instance; // ΩÃ±€≈Ê¿Ã «“¥Áµ… static ∫Øºˆ
+    public GameObject ballPrefab;
     public GameObject playerPrefab;
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -34,9 +35,11 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
     void Start()
     {
         Vector3 randomSpawnPos = Random.insideUnitSphere*5f;
-        randomSpawnPos.y=0.5f;
+        randomSpawnPos.y=1f;
 
         PhotonNetwork.Instantiate(playerPrefab.name, randomSpawnPos, Quaternion.identity);
+        PhotonNetwork.Instantiate(ballPrefab.name, randomSpawnPos, Quaternion.identity);
+
     }
 
     // Update is called once per frame
