@@ -8,6 +8,7 @@ public class PlayerMove : MonoBehaviourPun
 {
     public GameObject attackCollider;
     public GameObject fallEffect;
+    public GameObject ballPrefab;
     public float speed;
     public float jumpForce;
     public float maxSpeed;
@@ -29,6 +30,7 @@ public class PlayerMove : MonoBehaviourPun
     private bool isWalking;
     private bool isGround;
     private bool fallDamage;
+    private bool isAttack = false;
     Vector3 direction;
 
     // Start is called before the first frame update
@@ -87,15 +89,18 @@ public class PlayerMove : MonoBehaviourPun
 
         if (fire)
         {
-
+            if(isAttack==false)
+            {
+                isAttack=true;
             StartCoroutine(AttackRoutine());
-            animator.Play("f_melee_combat_attack_A");
+            animator.SetTrigger("Attack");
             // Set vibration in all Joysticks assigned to the Player
             int motorIndex = 0; // the first motor
             float motorLevel = 0.05f; // full motor speed
             float duration = 0.2f; // 2 seconds
             player.SetVibration(motorIndex, motorLevel, duration);
 
+            }
         }
         
 
@@ -108,6 +113,7 @@ public class PlayerMove : MonoBehaviourPun
         {
             return;
         }
+        
 
         Vector3 desiredPosition = target.position + offset;
         Vector3 smoothedPosition = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, smoothSpeed);
@@ -143,7 +149,16 @@ public class PlayerMove : MonoBehaviourPun
         {
             return;
         }
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Vector3 ballSpawnPos=transform.position;
+            ballSpawnPos.y=1f;
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                PhotonNetwork.Instantiate(ballPrefab.name, ballSpawnPos, Quaternion.identity);
 
+            }
+        }
         LookAround();
         float moveHorizontal = player.GetAxis("Move Horizontal");
         float moveVertical = player.GetAxis("Move Vertical");
@@ -224,7 +239,11 @@ public class PlayerMove : MonoBehaviourPun
         Rigidbody targetRigid=targetView.GetComponent<Rigidbody>();
 
         Vector3 dir=(otherPosition - playerPosition_).normalized;
+        if(targetRigid!=null)
+        {
         targetRigid.AddForce(dir*8,ForceMode.Impulse);
+
+        }
 
 
     }
@@ -235,6 +254,7 @@ public class PlayerMove : MonoBehaviourPun
         attackCollider.SetActive(true);
         yield return new WaitForSeconds(1);
         attackCollider.SetActive(false);
+        isAttack=false;
     }
 }
 

@@ -32,11 +32,13 @@ public class Ball : MonoBehaviour, IPunObservable
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag.Equals("Player"))
-        {
-            this.photonView.TransferOwnership(collision.gameObject.GetComponent<PhotonView>().Owner);
-        }
+        //if(collision.gameObject.tag.Equals("Player"))
+        //{
+        //    this.photonView.TransferOwnership(collision.gameObject.GetComponent<PhotonView>().Owner);
+        //}
+       
     }
+    
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

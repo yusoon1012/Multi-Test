@@ -226,6 +226,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4072995777684826731}
     m_Modifications:
+    - target: {fileID: 4072995778237852048, guid: 2db03e7c8a8135146b280e5da7e0289c,
+        type: 3}
+      propertyPath: m_SynchronizeParameters.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072995778237852048, guid: 2db03e7c8a8135146b280e5da7e0289c,
+        type: 3}
+      propertyPath: m_SynchronizeParameters.Array.data[2].Name
+      value: Attack
+      objectReference: {fileID: 0}
+    - target: {fileID: 4072995778237852048, guid: 2db03e7c8a8135146b280e5da7e0289c,
+        type: 3}
+      propertyPath: m_SynchronizeParameters.Array.data[2].Type
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 4072995778237852050, guid: 2db03e7c8a8135146b280e5da7e0289c,
         type: 3}
       propertyPath: ObservedComponents.Array.data[4]
@@ -236,6 +251,12 @@ PrefabInstance:
       propertyPath: cameraArm
       value: 
       objectReference: {fileID: 4072995779206989406}
+    - target: {fileID: 4072995779016754050, guid: 2db03e7c8a8135146b280e5da7e0289c,
+        type: 3}
+      propertyPath: ballPrefab
+      value: 
+      objectReference: {fileID: 7984904416453961653, guid: ed621c233206c2a47bd639e3c6ace16d,
+        type: 3}
     - target: {fileID: 6252356961376966267, guid: 2db03e7c8a8135146b280e5da7e0289c,
         type: 3}
       propertyPath: m_RootOrder
@@ -295,6 +316,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TT_demo_female
+      objectReference: {fileID: 0}
+    - target: {fileID: 6252356961377389083, guid: 2db03e7c8a8135146b280e5da7e0289c,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2db03e7c8a8135146b280e5da7e0289c, type: 3}
