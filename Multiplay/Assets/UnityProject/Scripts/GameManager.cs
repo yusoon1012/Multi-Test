@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-using Unity.VisualScripting;
+
 
 public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
 {
@@ -38,13 +36,22 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
         randomSpawnPos.y=1f;
 
         PhotonNetwork.Instantiate(playerPrefab.name, randomSpawnPos, Quaternion.identity);
-        PhotonNetwork.Instantiate(ballPrefab.name, randomSpawnPos, Quaternion.identity);
+        
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        Vector3 randomSpawnPos = Random.insideUnitSphere*5f;
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                PhotonNetwork.Instantiate(ballPrefab.name, randomSpawnPos, Quaternion.identity);
+
+            }
+        }
     }
 }

@@ -30,7 +30,7 @@ public class PlayerMove : MonoBehaviourPun
     private bool isGround;
     private bool fallDamage;
     Vector3 direction;
-    Rigidbody rb;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -173,7 +173,7 @@ public class PlayerMove : MonoBehaviourPun
 
         isWalking = movement.magnitude != 0;
 
-
+        
 
 
 
@@ -205,26 +205,28 @@ public class PlayerMove : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {    
-               
-        rb = other.GetComponent<Rigidbody>();
-        if(rb != null)
+      PhotonView photonView_=other.gameObject.GetComponent<PhotonView>();
+
+        if (photonView_ != null)
         {
-            direction = (other.transform.position-transform.position).normalized;
+        int viewId = photonView_.ViewID;
            
-            photonView.RPC("AttackForce", RpcTarget.MasterClient,direction);
+           
+            photonView.RPC("AttackForce", RpcTarget.All, viewId,transform.position,other.transform.position);
 
         }
     }
+
     [PunRPC]
-    private void AttackForce(Vector3 direction_)
+    private void AttackForce(int viewId_,Vector3 playerPosition_,Vector3 otherPosition)
     {
-        
-        if(rb!=null)
-        {
+        PhotonView targetView= PhotonView.Find(viewId_);
+        Rigidbody targetRigid=targetView.GetComponent<Rigidbody>();
 
-            rb.AddForce(direction_*8, ForceMode.Impulse);
+        Vector3 dir=(otherPosition - playerPosition_).normalized;
+        targetRigid.AddForce(dir*8,ForceMode.Impulse);
 
-        }
+
     }
     private IEnumerator AttackRoutine()
     {
