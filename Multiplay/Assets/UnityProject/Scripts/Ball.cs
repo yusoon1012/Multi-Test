@@ -8,10 +8,13 @@ public class Ball : MonoBehaviour, IPunObservable
 {
     PhotonView photonView;
     private Rigidbody rb;
+    Renderer ballColor;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        
+        ballColor=GetComponent<Renderer>();
+
+
     }
     // Start is called before the first frame update
     void Start()
@@ -22,7 +25,10 @@ public class Ball : MonoBehaviour, IPunObservable
     // Update is called once per frame
     void Update()
     {
-        
+        if(photonView.IsMine == false)
+        {
+            ballColor.material.color= Color.red;
+        }
     }
     private void OnCollisionEnter(Collision collision)
     {

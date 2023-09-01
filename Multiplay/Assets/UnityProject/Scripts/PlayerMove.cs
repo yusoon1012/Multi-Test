@@ -212,7 +212,7 @@ public class PlayerMove : MonoBehaviourPun
         int viewId = photonView_.ViewID;
            
            
-            photonView.RPC("AttackForce", RpcTarget.All, viewId,transform.position,other.transform.position);
+            photonView.RPC("AttackForce", RpcTarget.MasterClient, viewId,transform.position,other.transform.position);
 
         }
     }

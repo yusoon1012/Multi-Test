@@ -226,6 +226,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4072995777684826731}
     m_Modifications:
+    - target: {fileID: 4072995778237852050, guid: 2db03e7c8a8135146b280e5da7e0289c,
+        type: 3}
+      propertyPath: ObservedComponents.Array.data[4]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4072995779016754050, guid: 2db03e7c8a8135146b280e5da7e0289c,
         type: 3}
       propertyPath: cameraArm

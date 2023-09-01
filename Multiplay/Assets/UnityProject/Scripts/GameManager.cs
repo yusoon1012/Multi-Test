@@ -44,14 +44,16 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
     void Update()
     {
         Vector3 randomSpawnPos = Random.insideUnitSphere*5f;
-
+        randomSpawnPos.y=1f;
         if (PhotonNetwork.IsMasterClient)
         {
+
             if (Input.GetKeyDown(KeyCode.Q))
             {
                 PhotonNetwork.Instantiate(ballPrefab.name, randomSpawnPos, Quaternion.identity);
 
             }
         }
+       
     }
 }
