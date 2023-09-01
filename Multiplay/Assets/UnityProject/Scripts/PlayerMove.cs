@@ -255,6 +255,7 @@ public class PlayerMove : MonoBehaviourPun
         yield return new WaitForSeconds(1);
         attackCollider.SetActive(false);
         isAttack=false;
+
     }
 }
 

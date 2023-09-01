@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
     }
     public void RedScoreUp()
     {
-        photonView.RPC("AddRedScore", RpcTarget.All);
+        photonView.RPC("AddRedScore", RpcTarget.AllBuffered);
     }
     [PunRPC]
     void AddBlueScore()
@@ -95,7 +95,7 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
     }
     public void BlueScoreUp()
     {
-        photonView.RPC("AddBlueScore", RpcTarget.All);
+        photonView.RPC("AddBlueScore", RpcTarget.AllBuffered);
 
     }
 
