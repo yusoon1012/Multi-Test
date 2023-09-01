@@ -50,6 +50,7 @@ MonoBehaviour:
   - SetScoreTextRPC
   - AddBlueScore
   - AddRedScore
+  - RespawnPlayer
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

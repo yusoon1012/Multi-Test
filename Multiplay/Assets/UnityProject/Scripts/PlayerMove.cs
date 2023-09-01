@@ -67,7 +67,7 @@ public class PlayerMove : MonoBehaviourPun
         if (collision.gameObject.CompareTag("Floor"))
         {
             isGround = true;
-            airbornTimer = 0.0f;
+           
         }
     }
 
@@ -224,9 +224,17 @@ public class PlayerMove : MonoBehaviourPun
 
         if (photonView_ != null)
         {
+            
         int viewId = photonView_.ViewID;
-           
-           
+            if (other.CompareTag("Player"))
+            {
+                PlayerRespawn playerRespawn=other.GetComponent<PlayerRespawn>();
+                if(playerRespawn != null)
+                {
+                    playerRespawn.Respawn();
+                }
+            }
+
             photonView.RPC("AttackForce", RpcTarget.MasterClient, viewId,transform.position,other.transform.position);
 
         }
