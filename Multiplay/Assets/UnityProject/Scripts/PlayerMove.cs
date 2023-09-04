@@ -228,14 +228,18 @@ public class PlayerMove : MonoBehaviourPun
         int viewId = photonView_.ViewID;
             if (other.CompareTag("Player"))
             {
-                PlayerRespawn playerRespawn=other.GetComponent<PlayerRespawn>();
-                if(playerRespawn != null)
+                PlayerHealth playerHealth=other.GetComponent<PlayerHealth>();
+                if(playerHealth != null)
                 {
-                    playerRespawn.Respawn();
+                    playerHealth.currentHealth-=1;
                 }
             }
-
+            else
+            {
             photonView.RPC("AttackForce", RpcTarget.MasterClient, viewId,transform.position,other.transform.position);
+
+            }
+
 
         }
     }

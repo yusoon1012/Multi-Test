@@ -6,10 +6,11 @@ using Photon.Pun;
 public class PlayerRespawn : MonoBehaviour
 {
     public Vector3 respawnPosition;
+    PlayerHealth health;
     // Start is called before the first frame update
     void Start()
     {
-        
+        health=GetComponent<PlayerHealth>();
     }
 
     // Update is called once per frame
@@ -44,6 +45,8 @@ public class PlayerRespawn : MonoBehaviour
     void RespawnPlayer(Vector3 position)
     {
         transform.position = position;
+        health.currentHealth=health.maxHealth;
+        health.isDie=false;
     }
 
     
