@@ -99,6 +99,7 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
 
     }
 
+
     // Update is called once per frame
 
     void Update()
