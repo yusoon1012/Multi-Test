@@ -7,10 +7,12 @@ public class PlayerRespawn : MonoBehaviour
 {
     public Vector3 respawnPosition;
     PlayerHealth health;
+    Animator animator;
     // Start is called before the first frame update
     void Start()
     {
         health=GetComponent<PlayerHealth>();
+        animator=GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -47,6 +49,7 @@ public class PlayerRespawn : MonoBehaviour
         transform.position = position;
         health.currentHealth=health.maxHealth;
         health.isDie=false;
+        animator.Play("Blend Tree");
     }
 
     

@@ -13,6 +13,7 @@ public class PlayerMove : MonoBehaviourPun
     public float jumpForce;
     public float maxSpeed;
     public int playerId = 0;
+    public ParticleSystem particle;
     Rigidbody playerRigid;
     AudioSource playerStepSound;
     public Animator animator;
@@ -32,6 +33,8 @@ public class PlayerMove : MonoBehaviourPun
     private bool fallDamage;
     private bool isAttack = false;
     Vector3 direction;
+    PlayerHealth playerHealth;
+
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +47,7 @@ public class PlayerMove : MonoBehaviourPun
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         animator = GetComponent<Animator>();
+        playerHealth=GetComponent<PlayerHealth>();
     }
 
 
@@ -93,7 +97,7 @@ public class PlayerMove : MonoBehaviourPun
             {
                 isAttack=true;
             StartCoroutine(AttackRoutine());
-            animator.SetTrigger("Attack");
+                photonView.RPC("TriggerAnimation", RpcTarget.All);
             // Set vibration in all Joysticks assigned to the Player
             int motorIndex = 0; // the first motor
             float motorLevel = 0.05f; // full motor speed
@@ -146,6 +150,10 @@ public class PlayerMove : MonoBehaviourPun
     void Update()
     {
         if(!photonView.IsMine)
+        {
+            return;
+        }
+        if(playerHealth.isDie)
         {
             return;
         }
@@ -228,11 +236,9 @@ public class PlayerMove : MonoBehaviourPun
         int viewId = photonView_.ViewID;
             if (other.CompareTag("Player"))
             {
-                PlayerHealth playerHealth=other.GetComponent<PlayerHealth>();
-                if(playerHealth != null)
-                {
-                    playerHealth.currentHealth-=1;
-                }
+                photonView.RPC("HealthUpdate", RpcTarget.Others, viewId, 1f);
+                photonView.RPC("ParticlePlay", RpcTarget.AllBuffered, other.transform.position);
+                
             }
             else
             {
@@ -242,6 +248,25 @@ public class PlayerMove : MonoBehaviourPun
 
 
         }
+    }
+    [PunRPC]
+    private void ParticlePlay(Vector3 position)
+    {
+        particle.Play();
+        particle.transform.position = position;
+    }
+
+    [PunRPC]
+    private void HealthUpdate(int viewId_,float minusHp)
+    {
+        PhotonView targetView = PhotonView.Find(viewId_);
+        PlayerHealth playerHealth=targetView.GetComponent<PlayerHealth>();
+        
+        if (playerHealth != null)
+        {
+            playerHealth.UpdateHealth(1f);
+        }
+        
     }
 
     [PunRPC]
@@ -258,6 +283,11 @@ public class PlayerMove : MonoBehaviourPun
         }
 
 
+    }
+    [PunRPC]
+    private void TriggerAnimation()
+    {
+        animator.SetTrigger("Attack");
     }
     private IEnumerator AttackRoutine()
     {

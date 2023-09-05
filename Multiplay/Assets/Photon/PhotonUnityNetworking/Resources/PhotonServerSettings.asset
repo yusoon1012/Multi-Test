@@ -51,6 +51,12 @@ MonoBehaviour:
   - AddBlueScore
   - AddRedScore
   - RespawnPlayer
+  - UpdateHealth
+  - HealthUpdate
+  - TriggerAnimation
+  - DieAnimation
+  - ScaleUp
+  - ParticlePlay
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

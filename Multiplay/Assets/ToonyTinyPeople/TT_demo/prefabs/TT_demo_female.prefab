@@ -435,6 +435,7 @@ GameObject:
   - component: {fileID: 5911907663541765910}
   - component: {fileID: 7689321988934383009}
   - component: {fileID: 4675419944887536477}
+  - component: {fileID: 2905016285157944692}
   m_Layer: 0
   m_Name: TT_demo_female
   m_TagString: Player
@@ -658,6 +659,7 @@ MonoBehaviour:
   - {fileID: 2518961411955194704}
   - {fileID: 5911907663541765910}
   - {fileID: 7689321988934383009}
+  - {fileID: 2905016285157944692}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -681,6 +683,7 @@ MonoBehaviour:
   jumpForce: 10
   maxSpeed: 10
   playerId: 0
+  particle: {fileID: 0}
   animator: {fileID: 0}
   cameraArm: {fileID: 0}
   target: {fileID: 6252356961376966267}
@@ -760,6 +763,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnPosition: {x: 0, y: 0, z: 0}
+--- !u!114 &2905016285157944692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6252356961377389083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 260724e6e839bdb47a769834deec6d9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 10
+  currentHealth: 0
+  isDie: 0
+  healthSlider: {fileID: 0}
 --- !u!1 &6252356961377389087
 GameObject:
   m_ObjectHideFlags: 0
