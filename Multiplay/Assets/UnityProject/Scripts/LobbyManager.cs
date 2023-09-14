@@ -11,6 +11,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     private string gameVersion = "1.0.0";
     public TMP_Text connectionInfoText;
     public Button joinButton;
+    public TMP_InputField nickNameField;
+    public string nickName; 
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +47,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if(PhotonNetwork.IsConnected)
         {
             connectionInfoText.text="Join Room...";
+            if(string.IsNullOrEmpty(nickNameField.text))
+            {
+                nickName = "Guest";
+                nickNameField.text=nickName;
+            }
+            PlayerPrefs.SetString("NICKNAME", nickNameField.text);
+            PhotonNetwork.NickName = nickNameField.text;
             PhotonNetwork.JoinRandomRoom();
 
         }
@@ -64,7 +73,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
+      
+        
         connectionInfoText.text="Room Joined";
+        
         PhotonNetwork.LoadLevel("PlayScene");
 
     }

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4072995777684826731}
   m_Layer: 0
-  m_Name: Character
+  m_Name: Character_O
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -450,6 +450,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: TT_demo_female
       objectReference: {fileID: 0}
+    - target: {fileID: 6252356961379390523, guid: 2db03e7c8a8135146b280e5da7e0289c,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c89efcd1d41203747aab8efee3b0cce1, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2db03e7c8a8135146b280e5da7e0289c, type: 3}
 --- !u!4 &7945165112238132363 stripped
