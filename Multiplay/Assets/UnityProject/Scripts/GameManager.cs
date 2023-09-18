@@ -2,7 +2,7 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
 using TMPro;
-
+using System.Collections;
 
 public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
 {
@@ -30,11 +30,12 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
     public static int redScore = 0;
     public TMP_Text blueScoreText;
     public TMP_Text redScoreText;
-
+    public TMP_Text goalInfoText;
     public TMP_Text blueIdxText;
     public TMP_Text redIdxText;
     public TMP_Text playerIdxText;
     public int playerCount;
+    public GameObject goalInfoImage;
     public Transform ballPosition;
     public int playerIdx=0;
     public int blueteamIdx = 0;
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
     private int currentRedSpawnIndex = 0;
     Transform blueSpawnPoint;
     Transform RedSpawnPoint;
+    public bool isGoal=false;
 
     private void Awake()
     {
@@ -65,6 +67,8 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
             if (playerCount==2)
             {
                 blueSpawnPoint = blueTeamSpawnPoint[0];
+                
+               
 
             }
             else if(playerCount==4)
@@ -103,7 +107,7 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
             }
 
             PhotonNetwork.Instantiate(redPlayerPrefab.name, RedSpawnPoint.position, Quaternion.identity);
-          
+            
 
            
 
@@ -118,8 +122,8 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
     void Start()
     {
 
-        Vector3 randomSpawnPos = Random.insideUnitSphere*5f;
-        randomSpawnPos.y=1f;
+        //Vector3 randomSpawnPos = Random.insideUnitSphere*5f;
+        //randomSpawnPos.y=1f;
         
        
 
@@ -128,7 +132,32 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
 
 
     }
+    public void GoalTextUpdate(int teamNumber,string playerName)
+    {
+        if(PhotonNetwork.IsMasterClient)
+        {
+        photonView.RPC("GoalTextRpc", RpcTarget.All, teamNumber, playerName);
+        }
+    }
 
+    [PunRPC]
+    void GoalTextRpc(int teamNumber_,string playerName_)
+    {
+        isGoal=true;
+        goalInfoImage.SetActive(true);
+
+        if (teamNumber_==0)
+        {
+            goalInfoText.text=string.Format("Blue Team Goal\n{0}", playerName_);
+            goalInfoText.color=Color.blue;
+        }
+        else
+        {
+            goalInfoText.text=string.Format("Red Team Goal\n{0}", playerName_);
+            goalInfoText.color=Color.red;
+        }
+        StartCoroutine(GoalTextRoutine());
+    }
  
     
    
@@ -170,9 +199,9 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
     {
         photonView.RPC("SetScoreTextRPC", RpcTarget.All, redScore, blueScore);
     }
-    public void BallRespawn()
+    public void BallRespawn(int time)
     {
-        photonView.RPC("BallSpawn", RpcTarget.MasterClient);
+        StartCoroutine(BallRespawnRoutine(time));
     }
     [PunRPC]
     void BallSpawn()
@@ -204,15 +233,38 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
 
     }
 
+    private IEnumerator GoalTextRoutine()
+    {
+        yield return new WaitForSeconds(2);
+
+        if(PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("DeActiveGoalInfo", RpcTarget.All);
+
+        }
+    }
+    private IEnumerator BallRespawnRoutine(int time)
+    {
+        yield return new WaitForSeconds(time);
+        photonView.RPC("BallSpawn", RpcTarget.MasterClient);
+
+    }
+    [PunRPC]
+    void DeActiveGoalInfo()
+    {
+        goalInfoImage.SetActive(false);
+        isGoal=false;
+    }
 
     // Update is called once per frame
 
     void Update()
     {
         SetScoreText();
-        blueIdxText.text=string.Format("BlueIdx : {0}",blueteamIdx);
-        redIdxText.text=string.Format("RedIdx : {0}",redteamIdx);
-        playerIdxText.text=string.Format("PlayerCount : {0}",playerCount);
+       
+        //blueIdxText.text=string.Format("BlueIdx : {0}",blueteamIdx);
+        //redIdxText.text=string.Format("RedIdx : {0}",redteamIdx);
+        //playerIdxText.text=string.Format("PlayerCount : {0}",playerCount);
        
     }
 }

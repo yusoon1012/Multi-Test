@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SynchronizeVelocity: 1
-  m_SynchronizeAngularVelocity: 0
+  m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 0
   m_TeleportIfDistanceGreaterThan: 3
 --- !u!114 &7971118610349211197
@@ -180,6 +180,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5b58ef5423aa1449b4c33a0e0372737, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bluePlayerName: 
+  redPlayerName: 
+  teamNumber: 0
 --- !u!114 &7971118610349211198
 MonoBehaviour:
   m_ObjectHideFlags: 0

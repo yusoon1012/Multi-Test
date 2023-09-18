@@ -23,10 +23,14 @@ public class RedGoal : MonoBehaviour
         {
             if(PhotonNetwork.IsMasterClient)
             {
-
-            GameManager.instance.BlueScoreUp();
+                Ball ball = other.GetComponent<Ball>();
+                if (ball!=null)
+                {
+                    GameManager.instance.GoalTextUpdate(0, ball.bluePlayerName);
+                }
+                GameManager.instance.BlueScoreUp();
             PhotonNetwork.Destroy(other.gameObject);
-            GameManager.instance.BallRespawn();
+            GameManager.instance.BallRespawn(3);
             }
         }
     }

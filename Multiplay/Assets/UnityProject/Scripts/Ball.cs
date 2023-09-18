@@ -9,6 +9,9 @@ public class Ball : MonoBehaviour, IPunObservable
     PhotonView photonView;
     private Rigidbody rb;
     Renderer ballColor;
+    public string bluePlayerName;
+    public string redPlayerName;
+    public int teamNumber;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -33,7 +36,23 @@ public class Ball : MonoBehaviour, IPunObservable
         //{
         //    this.photonView.TransferOwnership(collision.gameObject.GetComponent<PhotonView>().Owner);
         //}
-       
+
+        PhotonView playerView=collision.gameObject.GetComponent<PhotonView>();
+        if (playerView != null)
+        {
+           
+            if(playerView.Owner.ActorNumber%2==0)
+            {
+                bluePlayerName=playerView.Owner.NickName;
+            }
+            else
+            {
+                redPlayerName=playerView.Owner.NickName;
+            }
+            teamNumber=playerView.Owner.ActorNumber;
+
+        }
+
     }
     
 
