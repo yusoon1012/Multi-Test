@@ -32,6 +32,7 @@ public class PlayerMove : MonoBehaviourPun
     private bool isGround;
     private bool fallDamage;
     private bool isAttack = false;
+    private bool isChatting = false;
     Vector3 direction;
     PlayerHealth playerHealth;
 
@@ -168,6 +169,7 @@ public class PlayerMove : MonoBehaviourPun
             }
         }
         LookAround();
+      
         float moveHorizontal = player.GetAxis("Move Horizontal");
         float moveVertical = player.GetAxis("Move Vertical");
 

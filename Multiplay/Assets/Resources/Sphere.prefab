@@ -205,3 +205,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5b58ef5423aa1449b4c33a0e0372737, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bluePlayerName: 
+  redPlayerName: 
+  teamNumber: 0
