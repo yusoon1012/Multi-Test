@@ -5,17 +5,23 @@ using UnityEngine.UI;
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Pun.UtilityScripts;
 
 public class ChatManager : MonoBehaviourPunCallbacks
 {
     public List<string> chatList = new List<string>();
     public GameObject chatPrefab;
+    public GameObject scroll;
+    public GameObject scoreBoard;
+    public GameObject inputField;
     public Transform chatContent;
     public TMP_InputField chatField;
     public TMP_Text chattingMember;
     public TMP_Text chatLog;
     string chatters;
     public ScrollRect chatRect;
+    bool chatOpen = false;
+    bool scoreBoardOn = false;
 
     // Start is called before the first frame update
     void Start()
@@ -26,18 +32,38 @@ public class ChatManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
+      
         ChatUpdate();
         if (Input.GetKeyDown(KeyCode.Return))
         {
-          
+            if(chatOpen==false)
+            {
+                chatOpen = true;
+            inputField.SetActive(true);
 
+            }
+            else
+            {
+                chatOpen = false;
+                inputField.SetActive(false);
+            }
                 SendButtonOnClicked();
-               // chatField.ActivateInputField();
-                chatField.Select();
+               chatField.ActivateInputField();
+                //chatField.Select();
             
 
            
         }
+
+        if(Input.GetKey(KeyCode.Tab))
+        {
+           scoreBoard.SetActive(true);
+        }
+        else
+        {
+            scoreBoard.SetActive(false);
+        }
+
 
 
     }
@@ -64,9 +90,13 @@ public class ChatManager : MonoBehaviourPunCallbacks
         chatters="Player List\n";
         foreach (Player player in PhotonNetwork.PlayerList)
         {
-            chatters+=player.NickName+"\n";
+
+            chatters+=string.Format("{0}       {1}", player.NickName,player.GetScore()+"\n");
+           
 
         }
+
+        
         chattingMember.text=chatters;
         chatRect.verticalNormalizedPosition = 0.0f; // 스크롤을 아래로 이동
 
@@ -75,9 +105,20 @@ public class ChatManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void ReceiveMsg(string msg)
     {
+        if(scroll.activeSelf==false)
+        {
+        scroll.SetActive(true);
+
+        }
         chatLog.text +="\n"+msg;
         chatRect.verticalNormalizedPosition = 0.0f; // 스크롤을 아래로 이동
-       
+        StartCoroutine(ChatVisibleRoutine());
+    }
+
+    private IEnumerator ChatVisibleRoutine()
+    {
+        yield return new WaitForSeconds(10);
+        scroll.SetActive(false);
     }
 
 }

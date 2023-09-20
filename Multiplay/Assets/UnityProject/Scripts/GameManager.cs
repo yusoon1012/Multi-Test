@@ -3,6 +3,7 @@ using Photon.Pun;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
 {
@@ -42,6 +43,8 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
     public int redteamIdx = 0;
     public Transform[] blueTeamSpawnPoint;
     public Transform[] redTeamSpawnPoint;
+
+    public List<int> scoreList;
     private int currentBlueSpawnIndex = 0;
     private int currentRedSpawnIndex = 0;
     Transform blueSpawnPoint;
@@ -261,7 +264,7 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
     void Update()
     {
         SetScoreText();
-       
+        
         //blueIdxText.text=string.Format("BlueIdx : {0}",blueteamIdx);
         //redIdxText.text=string.Format("RedIdx : {0}",redteamIdx);
         //playerIdxText.text=string.Format("PlayerCount : {0}",playerCount);

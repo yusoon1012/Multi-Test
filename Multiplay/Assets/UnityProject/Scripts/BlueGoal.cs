@@ -1,4 +1,6 @@
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,6 +28,18 @@ public class BlueGoal : MonoBehaviour
                 if(ball!=null)
                 {
                     GameManager.instance.GoalTextUpdate(1, ball.redPlayerName);
+                    for(int i=0;i<PhotonNetwork.PlayerList.Length;i++)
+                    {
+                        Player player = PhotonNetwork.PlayerList[i];
+                        
+                        if(player.NickName==ball.redPlayerName)
+                        {
+                            string name = ball.redPlayerName;
+                            Debug.LogFormat("골을 넣은 레드팀 플레이어는 ? {0}", name);
+                            player.AddScore(100);
+                        }
+                    }
+                    
                 }
                 GameManager.instance.RedScoreUp();
             PhotonNetwork.Destroy(other.gameObject);

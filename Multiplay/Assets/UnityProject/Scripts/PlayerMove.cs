@@ -33,6 +33,7 @@ public class PlayerMove : MonoBehaviourPun
     private bool fallDamage;
     private bool isAttack = false;
     private bool isChatting = false;
+
     Vector3 direction;
     PlayerHealth playerHealth;
 
