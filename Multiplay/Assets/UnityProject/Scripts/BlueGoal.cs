@@ -35,7 +35,7 @@ public class BlueGoal : MonoBehaviour
                         if(player.NickName==ball.redPlayerName)
                         {
                             string name = ball.redPlayerName;
-                            Debug.LogFormat("골을 넣은 레드팀 플레이어는 ? {0}", name);
+                            
                             player.AddScore(100);
                         }
                     }

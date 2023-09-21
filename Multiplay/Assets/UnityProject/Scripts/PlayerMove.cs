@@ -151,7 +151,11 @@ public class PlayerMove : MonoBehaviourPun
     // Update is called once per frame
     void Update()
     {
-        if(!photonView.IsMine)
+        if (ChatManager.instance.chatOpen)
+        {
+            return;
+        }
+        if (!photonView.IsMine)
         {
             return;
         }

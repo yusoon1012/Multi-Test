@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviourPunCallbacks,IPunObservable
 
 
         }
-
+        ChatManager.instance.JoinNameInfoUpdate(PhotonNetwork.NickName);
         if (playerCount%2==0)
         {
             //PhotonNetwork.Instantiate(bluePlayerPrefab.name, blueTeamSpawnPoint[blueteamIdx].position, Quaternion.identity);
